@@ -31,17 +31,17 @@ public class Game extends JPanel {
 	private int initGoalX;
 	private int initGoalY;
 	private final int block;
-	public final static int W = 1;
-	public final static int U = 2;
-	public final static int P = 3;
-	public final static int G = 4;
-	public final static int V = 5;
+	public final static int W = 0;
+	public final static int U = 1;
+	public final static int P = 2;
+	public final static int G = 3;
+	public final static int V = 4;
 	public final static int UP = 1;
 	public final static int LEFT = 2;
 	public final static int DOWN = 3;
 	public final static int RIGHT = 4;
 
-	public Game(int size){
+	public Game(int size, int threshold){
 		this.setLayout(null);
 		this.size = size;
 		this.block = 600 / size;
@@ -51,9 +51,9 @@ public class Game extends JPanel {
 		int piece;
 		for(int i = 0; i < size; i++){
 			for(int j = 0; j < size; j++){
-				piece = rand.nextInt(2);
-				this.map[i][j] = piece;
-				this.initialMap[i][j] = piece;
+				piece = rand.nextInt((int) 100 / threshold);
+				this.map[i][j] = (piece == W)? W : U;
+				this.initialMap[i][j] = (piece == W)? W : U;
 			}
 		}
 		int pos1 = rand.nextInt(size * size);
