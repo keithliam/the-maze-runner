@@ -1,13 +1,13 @@
 package themazerunner;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.regex.Pattern;
 
 public class AI {
 	private String initMap = new String();
-	private ArrayList<String> minHeap = new ArrayList<String>();
+	private HashMap<Integer, String> minHeap = new HashMap<Integer, String>();
 	private int size;
 
 	public final static int W = 0;
@@ -66,7 +66,9 @@ public class AI {
 
 	}
 
-	// public String aStar()
+	// public String aStar(){
+	// 	String 
+	// }
 
 	private void printMap(String map){
 		System.out.println("\nPRINTED MAP");
@@ -96,15 +98,14 @@ public class AI {
 	}
 
 	private void swap(int index, int parentIndex){
-		String temp = this.minHeap.get(parentIndex);
-		// System.out.println("Index: " + index);
-		this.minHeap.set(parentIndex, this.minHeap.get(index));
-		this.minHeap.set(index, temp);
+		String temp = this.minHeap.get(index);
+		this.minHeap.put(index, this.minHeap.get(parentIndex));
+		this.minHeap.put(parentIndex, temp);
 	}
 
 	private void addToHeap(String map){
 		// System.out.println("dsf");
-		this.minHeap.add(map);
+		this.minHeap.put(this.minHeap.size(), map);
 		System.out.println("THIS: " + map);
 		float value = this.getH(map);
 		int index = this.minHeap.size() - 1;
@@ -120,8 +121,8 @@ public class AI {
 	}
 
 	private String getMin(){
-		String temp = this.minHeap.get(0);
-		this.minHeap.set(0, this.minHeap.get(this.minHeap.size() - 1));
+		String temp = this.minHeap.remove(0);
+		this.minHeap.put(0, this.minHeap.get(this.minHeap.size() - 1));
 		this.minHeap.remove(this.minHeap.size() - 1);
 		float value = this.getH(this.minHeap.get(0));
 		int index = 0, size = this.minHeap.size();

@@ -56,8 +56,8 @@ public class Game extends JPanel {
 				this.initialMap[i][j] = (piece == W)? W : U;
 			}
 		}
-		// int pos1 = 90;
-		int pos1 = rand.nextInt(size * size);
+		int pos1 = 90;
+		// int pos1 = rand.nextInt(size * size);
 		this.playerX = pos1 % size;
 		this.playerY = pos1 / size;
 		this.initPlayerX = this.playerX;
