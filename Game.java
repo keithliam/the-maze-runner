@@ -56,6 +56,7 @@ public class Game extends JPanel {
 				this.initialMap[i][j] = (piece == W)? W : U;
 			}
 		}
+		// int pos1 = 90;
 		int pos1 = rand.nextInt(size * size);
 		this.playerX = pos1 % size;
 		this.playerY = pos1 / size;
@@ -73,7 +74,7 @@ public class Game extends JPanel {
 		this.initGoalY = this.goalY;
 		this.map[(int) pos2 / size][(int) pos2 % size] = G;
 		this.initialMap[(int) pos2 / size][(int) pos2 % size] = G;
-		this.printMap();
+		// this.printMap();
 
 		Game game = this;
 		game.requestFocus();
@@ -163,6 +164,10 @@ public class Game extends JPanel {
 		this.add(bottomPanel10);
 	}
 
+	public int[][] getMap(){
+		return this.map;
+	}
+
 	public void move(int direction){
 		this.repaint();
 		if(direction == UP){
@@ -173,7 +178,7 @@ public class Game extends JPanel {
 				this.goalTest();
 			}
 		} else if(direction == DOWN){
-			System.out.println("this: " + this.playerY + " : " + this.size);
+			// System.out.println("this: " + this.playerY + " : " + this.size);
 			if(this.playerY < this.size - 1 && this.map[this.playerY + 1][this.playerX] != W){
 				this.map[this.playerY + 1][this.playerX] = P;
 				this.map[this.playerY][this.playerX] = V;
@@ -231,7 +236,7 @@ public class Game extends JPanel {
 				}
 			}
 		}
-		this.printMap();
+		// this.printMap();
 	}
 
 	public void printMap(){
