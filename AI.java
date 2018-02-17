@@ -1,13 +1,15 @@
 package themazerunner;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.regex.Pattern;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class AI {
 	private String initMap = new String();
 	private HashMap<Integer, String> minHeap = new HashMap<Integer, String>();
+	private HashMap<String, Integer> minHeapRev = new HashMap<String, Integer>();
+	private HashMap<String, String> moves = new HashMap<String, String>();
 	private int size;
 
 	public final static int W = 0;
@@ -34,55 +36,72 @@ public class AI {
 		}
 		this.size = size;
 		this.initMap = this.initMap + '|' + Float.toString(this.getDistance(playerX, playerY, goalX, goalY)) + '&';
-		this.addToHeap(this.initMap);
-		// System.out.println(this.actions(this.initMap));
-		// this.printMap(this.result(this.initMap, UP));
-		// this.addToHeap(this.result(this.initMap, RIGHT));
-			this.addToHeap(this.result(this.initMap, RIGHT));
-			this.addToHeap(this.result(this.result(this.initMap, RIGHT), UP));
-		// this.addToHeap(this.result(this.initMap, DOWN));
-		this.addToHeap(this.result(this.result(this.result(this.result(this.initMap, RIGHT), UP), RIGHT), UP));
-		this.addToHeap(this.result(this.result(this.result(this.result(this.result(this.initMap, RIGHT), UP), RIGHT), UP), LEFT));
-		this.addToHeap(this.result(this.result(this.result(this.result(this.result(this.result(this.initMap, RIGHT), UP), RIGHT), UP), LEFT), LEFT));
-		this.addToHeap(this.result(this.result(this.result(this.result(this.result(this.result(this.result(this.initMap, RIGHT), UP), RIGHT), UP), LEFT), LEFT), DOWN));
-		// this.addToHeap(this.result(this.result(this.result(this.initMap, RIGHT), UP), RIGHT));
-		// this.addToHeap(this.result(this.initMap, UP));
-		// this.addToHeap(this.result(this.initMap, LEFT));
-		// this.addToHeap(this.result(this.initMap, LEFT));
-		// this.addToHeap(this.result(this.initMap, DOWN));
-		// this.addToHeap(this.result(this.initMap, RIGHT));
-		// this.printMap(this.minHeap.get(0));
-		// this.printMap(this.minHeap.get(1));
-		// this.printMap(this.minHeap.get(2));
-		System.out.println(this.minHeap);
-		// this.printMap(this.getMin());
-		// System.out.println(this.minHeap);
-		// this.printMap(this.getMin());
-		// System.out.println(this.minHeap);
-		// this.printMap(this.getMin());
-		// System.out.println(this.minHeap);
-		// this.printMap(this.getMin());
-		// System.out.println(this.minHeap);
-
 	}
 
-	// public String aStar(){
-	// 	String 
-	// }
+	public void printQueue(){
+		String map;
+		for(int i = 1; i <= this.minHeap.size(); i++){
+			map = this.minHeap.get(i);
+			System.out.println(i + ": " + this.moves.get(map));
+		}
+	}
+
+	public String aStar(){
+		HashMap<String, String> closedList = new HashMap<String, String>();
+		String s, e, x, y = this.initMap.substring(0, this.initMap.indexOf('|'));
+		int g;
+		boolean isFrontier, isExplored;
+		this.minHeap.put(1, y);
+		this.moves.put(y, this.initMap.substring(this.initMap.indexOf('|') + 1));
+		while(this.minHeap.size() != 0){
+			s = this.getMin();
+			closedList.put(s.substring(0, s.indexOf('|')), s.substring(s.indexOf('|') + 1));
+			if(this.goalTest(s)) return this.getPath(s);
+			for(int a : this.actions(s)){
+				x = result(s, a);
+				g = x.length() - x.indexOf('&') - 1;
+				e = x.substring(0, x.indexOf('|'));
+				isFrontier = this.minHeap.containsValue(e);
+				isExplored = closedList.containsKey(e);
+				if(!isFrontier && !isExplored) this.addToHeap(x, false);
+				if(isFrontier){
+					y = this.moves.get(e);
+					if(g < y.length() - y.indexOf('&') - 1){
+						if(!this.minHeapRev.containsKey(x)) return "none";
+						this.addToHeap(x, true);
+					}
+				} else if(isExplored){
+					y = closedList.get(e);
+					if(g < y.length() - y.indexOf('&') - 1){
+						this.addToHeap(x, false);
+					}
+				}
+			}
+		}
+		return "none";
+	}
 
 	private void printMap(String map){
 		System.out.println("\nPRINTED MAP");
 		for(int i = 0; i < this.size * this.size; i++){
-			// System.out.println("this");
 			if(i % this.size == 0 && i != 0) System.out.println();
 			System.out.print(map.charAt(i) + " ");
 		}
 		System.out.println();
-		System.out.println("\nH: " + this.getH(map));
+		System.out.println("\nH: " + this.findF(map));
 	}
 
-	private float getH(String map){
+	private float findF(String map){
 		return Float.parseFloat(map.substring(map.indexOf('|') + 1, map.indexOf('&')));
+	}
+
+	private float getF(String map){
+		String temp = this.moves.get(map);
+		return Float.parseFloat(temp.substring(0, temp.indexOf('&')));
+	}
+
+	private String getPath(String map){
+		return map.substring(map.indexOf('&') + 1);
 	}
 
 	private int getParentIndex(int index){
@@ -99,51 +118,70 @@ public class AI {
 
 	private void swap(int index, int parentIndex){
 		String temp = this.minHeap.get(index);
+		this.minHeapRev.put(this.minHeap.get(parentIndex), index);
 		this.minHeap.put(index, this.minHeap.get(parentIndex));
+		this.minHeapRev.put(temp, parentIndex);
 		this.minHeap.put(parentIndex, temp);
 	}
 
-	private void addToHeap(String map){
-		// System.out.println("dsf");
-		this.minHeap.put(this.minHeap.size(), map);
-		System.out.println("THIS: " + map);
-		float value = this.getH(map);
-		int index = this.minHeap.size() - 1;
-		// System.out.println("----------------------");
-		// System.out.println(this.minHeap);
-		// System.out.println("IF " + index + " != 0 && " + value + " < " + this.getH(this.minHeap.get(this.getParentIndex(index))));
-		while(index != 0 && value < this.getH(this.minHeap.get(this.getParentIndex(index)))){
-			// System.out.println("LOOPEDT");
+	private void addToHeap(String map, boolean isDuplicate){
+		String temp = map.substring(0, map.indexOf('|'));
+
+		if(!isDuplicate){
+			this.minHeap.put(this.minHeap.size() + 1, temp);
+			this.minHeapRev.put(temp, this.minHeap.size());
+		}
+		
+		this.moves.put(temp, map.substring(map.indexOf('|') + 1, map.length()));
+		float value = this.findF(map);
+		int index;
+		if(isDuplicate){
+			index = this.minHeapRev.get(map);
+		} else {
+			index = this.minHeap.size();
+		}
+
+		while(this.getParentIndex(index) != 0 && value < this.getF(this.minHeap.get(this.getParentIndex(index)))){
 			this.swap(index, this.getParentIndex(index));
 			index = this.getParentIndex(index);
 		}
-		// System.out.println(this.minHeap)7;
 	}
 
 	private String getMin(){
-		String temp = this.minHeap.remove(0);
-		this.minHeap.put(0, this.minHeap.get(this.minHeap.size() - 1));
-		this.minHeap.remove(this.minHeap.size() - 1);
-		float value = this.getH(this.minHeap.get(0));
-		int index = 0, size = this.minHeap.size();
-		int leftChildIndex = this.getLeftChildIndex(0);
-		int rightChildIndex = this.getRightChildIndex(0);
-		float leftH = (leftChildIndex < size)? this.getH(this.minHeap.get(leftChildIndex)) : -1;
-		float rightH = (rightChildIndex < size)? this.getH(this.minHeap.get(rightChildIndex)) : -1;
-		while((leftChildIndex < size || (rightChildIndex < size)) && ((leftChildIndex != -1 && leftH < value) || (rightChildIndex != -1 && rightH < value))){
-			if(leftChildIndex != -1 && leftChildIndex < size && leftH < value && leftH < rightH){
-				this.swap(index, leftChildIndex);
-				index = leftChildIndex;
-			} else if(rightChildIndex != -1 && rightChildIndex < size && rightH < value && rightH < leftH){
-				this.swap(index, rightChildIndex);
-				index = rightChildIndex;
+		if(this.minHeap.size() != 0){
+			String temp = this.minHeap.get(1);
+			temp = temp + '|' + this.moves.get(temp);
+			this.swap(1, this.minHeap.size());
+			float value = this.getF(this.minHeap.get(1));
+			String toRemove = this.minHeap.remove(this.minHeap.size());
+			this.moves.remove(toRemove);
+			this.minHeapRev.remove(toRemove);
+			int index = 1, size = this.minHeap.size();
+			int leftChildIndex = this.getLeftChildIndex(1);
+			int rightChildIndex = this.getRightChildIndex(1);
+			float leftH = (leftChildIndex <= size)? this.getF(this.minHeap.get(leftChildIndex)) : -1;
+			float rightH = (rightChildIndex <= size)? this.getF(this.minHeap.get(rightChildIndex)) : -1;
+			
+			while((leftChildIndex < size || (rightChildIndex < size)) && ((leftChildIndex != -1 && leftH < value) || (rightChildIndex != -1 && rightH < value))){
+				if(leftChildIndex != -1 && leftChildIndex < size && leftH < value && leftH < rightH){
+					this.swap(index, leftChildIndex);
+					index = leftChildIndex;
+				} else if(rightChildIndex != -1 && rightChildIndex < size && rightH < value && rightH < leftH){
+					this.swap(index, rightChildIndex);
+					index = rightChildIndex;
+				} else {
+					break;
+				}
+				leftChildIndex = this.getLeftChildIndex(index);
+				rightChildIndex = this.getRightChildIndex(index);
+				leftH = (leftChildIndex <= size)? this.getF(this.minHeap.get(leftChildIndex)) : -1;
+				rightH = (rightChildIndex <= size)? this.getF(this.minHeap.get(rightChildIndex)) : -1;
+				// this.printQueue();
 			}
-			leftChildIndex = this.getLeftChildIndex(index);
-			rightChildIndex = this.getRightChildIndex(index);
-			leftH = (leftChildIndex < size && leftChildIndex > 0)? this.getH(this.minHeap.get(leftChildIndex)) : -1;
-			rightH = (rightChildIndex < size && rightChildIndex > 0)? this.getH(this.minHeap.get(rightChildIndex)) : -1;
+			return temp;
+		} else {
+			return "none";
 		}
-		return temp;
 	}
 
 	private float getDistance(int x, int y, int a, int b){
@@ -154,8 +192,8 @@ public class AI {
 		return map.charAt((this.size * y) + x);
 	}
 
-	private Queue<Integer> actions(String map){
-		Queue<Integer> moves = new LinkedList<Integer>();
+	private HashSet<Integer> actions(String map){
+		HashSet<Integer> moves = new HashSet<Integer>();
 		int index = map.indexOf('2');
 		int playerX = index % this.size;
 		int playerY = index / this.size;
@@ -185,7 +223,7 @@ public class AI {
 		else if(direction == LEFT) playerX--;
 		else playerX++;
 		newMap = newMap.substring(0, (this.size * (playerY)) + playerX) + '2' + newMap.substring((this.size * (playerY)) + playerX + 1);
-		newMap = newMap.substring(0, newMap.indexOf('|') + 1) + Float.toString(this.getDistance(playerX, playerY, goalX, goalY)) + newMap.substring(newMap.indexOf('&'));
+		newMap = newMap.substring(0, newMap.indexOf('|') + 1) + Float.toString((float) (this.getDistance(playerX, playerY, goalX, goalY) + (newMap.substring(newMap.indexOf('&') + 1).length() * 0.1))) + newMap.substring(newMap.indexOf('&'));
 		if(direction == UP) newMap = newMap + "U";
 		else if(direction == LEFT) newMap = newMap + "L";
 		else if(direction == DOWN) newMap = newMap + "D";

@@ -20,8 +20,9 @@ public class MazeRunner {
 		frame.setResizable(false);
 		final Container container = frame.getContentPane();
 
-		final Game mazeGame = new Game(N, 1); // wall occurrence %
+		final Game mazeGame = new Game(N, 33); // wall occurrence %
 		AI solver = new AI(mazeGame.getMap(), N);
+		System.out.println("Solution: " + solver.aStar());
 
 		frame.add(mazeGame);
 		frame.pack();
