@@ -67,7 +67,7 @@ public class AI {
 				if(isFrontier){
 					y = this.moves.get(e);
 					if(g < y.length() - y.indexOf('&') - 1){
-						if(!this.minHeapRev.containsKey(x)) return "none";
+						if(!this.minHeapRev.containsKey(x)) return "No solution [or] HashMap can't handle many long Strings as Keys";
 						this.addToHeap(x, true);
 					}
 				} else if(isExplored){
@@ -78,7 +78,7 @@ public class AI {
 				}
 			}
 		}
-		return "none";
+		return "No solution";
 	}
 
 	private void printMap(String map){
@@ -223,7 +223,7 @@ public class AI {
 		else if(direction == LEFT) playerX--;
 		else playerX++;
 		newMap = newMap.substring(0, (this.size * (playerY)) + playerX) + '2' + newMap.substring((this.size * (playerY)) + playerX + 1);
-		newMap = newMap.substring(0, newMap.indexOf('|') + 1) + Float.toString((float) (this.getDistance(playerX, playerY, goalX, goalY) + (newMap.substring(newMap.indexOf('&') + 1).length() * 0.1))) + newMap.substring(newMap.indexOf('&'));
+		newMap = newMap.substring(0, newMap.indexOf('|') + 1) + Float.toString((float) (this.getDistance(playerX, playerY, goalX, goalY) + (newMap.substring(newMap.indexOf('&') + 1).length() * 0.05))) + newMap.substring(newMap.indexOf('&'));
 		if(direction == UP) newMap = newMap + "U";
 		else if(direction == LEFT) newMap = newMap + "L";
 		else if(direction == DOWN) newMap = newMap + "D";
