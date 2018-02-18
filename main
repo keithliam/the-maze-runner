@@ -1,2 +1,2 @@
-javac -d . *.java
+javac -d . source_code/*.java
 java themazerunner.Main
