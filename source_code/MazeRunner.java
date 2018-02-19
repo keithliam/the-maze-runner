@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Scanner;
-
+import java.io.PrintWriter;
 import javax.imageio.ImageIO;
 
 public class MazeRunner {
@@ -50,6 +50,20 @@ public class MazeRunner {
 			int east = (screenWidth / 2) - width;
 			this.frame.setLocation(east, north);
 			solutionWindow = new Solution(this.mapSize, this.game.getMap(), solution);
+		}
+		this.outputFile(solution);
+	}
+
+	public void outputFile(String solution){
+		try{
+			if(solution.charAt(0) == 'U' || solution.charAt(0) == 'L' || solution.charAt(0) == 'D' || solution.charAt(0) == 'R'){
+				solution = solution.replace("", " ").trim();
+			}
+			PrintWriter writer = new PrintWriter("maze.out", "UTF-8");
+			writer.println(solution);
+			writer.close();
+		} catch(Exception e){
+			System.out.println(e.getMessage());
 		}
 	}
 }
