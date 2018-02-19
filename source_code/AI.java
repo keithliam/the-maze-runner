@@ -77,6 +77,7 @@ public class AI {
 					}
 				}
 			}
+			this.printQueue();
 		}
 		return "No solution";
 	}
@@ -176,7 +177,6 @@ public class AI {
 				rightChildIndex = this.getRightChildIndex(index);
 				leftH = (leftChildIndex <= size)? this.getF(this.minHeap.get(leftChildIndex)) : -1;
 				rightH = (rightChildIndex <= size)? this.getF(this.minHeap.get(rightChildIndex)) : -1;
-				// this.printQueue();
 			}
 			return temp;
 		} else {
@@ -223,7 +223,7 @@ public class AI {
 		else if(direction == LEFT) playerX--;
 		else playerX++;
 		newMap = newMap.substring(0, (this.size * (playerY)) + playerX) + '2' + newMap.substring((this.size * (playerY)) + playerX + 1);
-		newMap = newMap.substring(0, newMap.indexOf('|') + 1) + Float.toString((float) (this.getDistance(playerX, playerY, goalX, goalY) + (newMap.substring(newMap.indexOf('&') + 1).length() * 0.05))) + newMap.substring(newMap.indexOf('&'));
+		newMap = newMap.substring(0, newMap.indexOf('|') + 1) + Float.toString((float) (this.getDistance(playerX, playerY, goalX, goalY) + (newMap.substring(newMap.indexOf('&') + 1).length() * 0.02))) + newMap.substring(newMap.indexOf('&'));
 		if(direction == UP) newMap = newMap + "U";
 		else if(direction == LEFT) newMap = newMap + "L";
 		else if(direction == DOWN) newMap = newMap + "D";

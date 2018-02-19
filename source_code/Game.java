@@ -327,9 +327,9 @@ public class Game extends JPanel {
 		Image wall = null, student = null, floor = null, bluebook = null;
 		try {
 			wall = ImageIO.read(new File("img/wall.png"));
-			student = ImageIO.read(new File("img/student.gif"));
+			student = ImageIO.read(new File("img/student.png"));
 			floor = ImageIO.read(new File("img/tiles.png"));
-			bluebook = ImageIO.read(new File("img/blue_book.gif"));
+			bluebook = ImageIO.read(new File("img/blue_book.png"));
 		} catch(Exception e){
 			System.out.println(e.getMessage());
 		}
@@ -346,7 +346,6 @@ public class Game extends JPanel {
 				}
 			}
 		}
-		// this.printMap();
 	}
 
 	public void printMap(){
