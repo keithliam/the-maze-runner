@@ -15,6 +15,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Color;
 import java.awt.Image;
+import javax.imageio.ImageIO;
+import java.io.File;
 
 import java.util.Random;
 
@@ -57,7 +59,7 @@ public class Game extends JPanel {
 
 		Game game = this;
 
-		ImageIcon icon1 = new ImageIcon("img/tiles.png");
+		ImageIcon icon1 = new ImageIcon("img/wall.png");
 		JLabel bottomPanel1 = new JLabel();
 		JLabel bottomPanel2 = new JLabel();
 		JLabel bottomPanel3 = new JLabel();
@@ -322,23 +324,25 @@ public class Game extends JPanel {
 
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
+		Image wall = null, student = null, floor = null, bluebook = null;
+		try {
+			wall = ImageIO.read(new File("img/wall.png"));
+			student = ImageIO.read(new File("img/student.gif"));
+			floor = ImageIO.read(new File("img/tiles.png"));
+			bluebook = ImageIO.read(new File("img/blue_book.gif"));
+		} catch(Exception e){
+			System.out.println(e.getMessage());
+		}
 		for(int i = 0; i < this.size; i++){
 			for(int j = 0; j < this.size; j++){
 				if(this.map[i][j] == W){
-					g.setColor(Color.BLACK);
-					g.fillRect(j * this.block, i * this.block, this.block, this.block);
-				} else if(this.map[i][j] == U){
-					g.setColor(Color.WHITE);
-					g.fillRect(j * this.block, i * this.block, this.block, this.block);
-				} else if(this.map[i][j] == V){
-					g.setColor(Color.GREEN);
-					g.fillRect(j * this.block, i * this.block, this.block, this.block);
+	                g.drawImage(wall, j * this.block, i * this.block, this.block, this.block, null);
+				} else if(this.map[i][j] == U || this.map[i][j] == V){
+	                g.drawImage(floor, j * this.block, i * this.block, this.block, this.block, null);
 				} else if(this.map[i][j] == P){
-					g.setColor(Color.BLUE);
-					g.fillRect(j * this.block, i * this.block, this.block, this.block);
+	                g.drawImage(student, j * this.block, i * this.block, this.block, this.block, null);
 				} else if(this.map[i][j] == G){
-					g.setColor(Color.RED);
-					g.fillRect(j * this.block, i * this.block, this.block, this.block);
+	                g.drawImage(bluebook, j * this.block, i * this.block, this.block, this.block, null);
 				}
 			}
 		}
