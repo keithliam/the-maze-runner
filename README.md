@@ -16,6 +16,6 @@ To beat the game, you need to move the player around to get to the goal.
 ## How to run
 
 
-```
-./main
+```console
+$ ./main
 ```
